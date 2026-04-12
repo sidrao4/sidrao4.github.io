@@ -1,0 +1,386 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title>Projects — Sidharth Rao</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="assets/css/fontawesome-all.min.css" />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap" />
+	<style>
+		*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+		:root {
+			--bg:        #0d0f14;
+			--sidebar:   #111318;
+			--surface:   #181b22;
+			--border:    #23262f;
+			--text:      #c9cdd6;
+			--text-dim:  #5a5f6e;
+			--heading:   #eaedf4;
+			--accent:    #4f8ef7;
+			--sidebar-w: 220px;
+			--toggle-w:  36px;
+			--transition: 0.25s ease;
+		}
+
+		html, body {
+			height: 100%;
+			font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+			font-size: 15px;
+			background: var(--bg);
+			color: var(--text);
+			line-height: 1.7;
+		}
+
+		a { color: var(--accent); text-decoration: none; }
+		a:hover { color: #7aaeff; }
+
+		#layout { display: flex; min-height: 100vh; }
+
+		/* ── Sidebar ── */
+		#sidebar {
+			width: var(--sidebar-w);
+			background: var(--sidebar);
+			border-right: 1px solid var(--border);
+			display: flex;
+			flex-direction: column;
+			position: fixed;
+			top: 0; left: 0; bottom: 0;
+			overflow: hidden;
+			z-index: 100;
+			transition: width var(--transition);
+		}
+
+		#sidebar.collapsed { width: var(--toggle-w); }
+
+		#sidebar-toggle {
+			position: absolute;
+			top: 1em; right: 0.5em;
+			background: none;
+			border: none;
+			color: var(--text-dim);
+			cursor: pointer;
+			font-size: 1em;
+			padding: 0.3em;
+			z-index: 101;
+			transition: color 0.15s;
+			line-height: 1;
+		}
+		#sidebar-toggle:hover { color: var(--accent); }
+
+		.sidebar-content {
+			opacity: 1;
+			transition: opacity var(--transition);
+			padding-top: 2.8em;
+		}
+		#sidebar.collapsed .sidebar-content { opacity: 0; pointer-events: none; }
+
+		.brand {
+			padding: 0.8em 1.4em 1.2em;
+			border-bottom: 1px solid var(--border);
+		}
+		.brand .name { font-size: 0.95em; font-weight: 700; color: var(--heading); white-space: nowrap; }
+		.brand .sub  { font-size: 0.75em; color: var(--text-dim); margin-top: 0.2em; white-space: nowrap; }
+
+		#sidebar nav { padding: 1em 0; }
+		#sidebar nav a {
+			display: block;
+			padding: 0.5em 1.4em;
+			color: var(--text);
+			font-size: 0.85em;
+			font-weight: 500;
+			letter-spacing: 0.02em;
+			border-left: 2px solid transparent;
+			white-space: nowrap;
+			transition: color 0.15s, border-color 0.15s, background 0.15s;
+		}
+		#sidebar nav a:hover,
+		#sidebar nav a.active {
+			color: var(--accent);
+			border-left-color: var(--accent);
+			background: rgba(79,142,247,0.06);
+		}
+
+		/* ── Main ── */
+		#main {
+			margin-left: var(--sidebar-w);
+			flex: 1;
+			display: flex;
+			justify-content: center;
+			align-items: flex-start;
+			padding: 5em 2em;
+			transition: margin-left var(--transition);
+		}
+		#layout.sidebar-collapsed #main { margin-left: var(--toggle-w); }
+
+		.content-wrap {
+			width: 100%;
+			max-width: 780px;
+		}
+
+		.page-title {
+			font-family: 'Playfair Display', Georgia, serif;
+			font-size: 2.2em;
+			font-weight: 600;
+			color: var(--heading);
+			letter-spacing: 0.01em;
+			margin-bottom: 0.2em;
+		}
+
+		.page-divider {
+			border: none;
+			border-top: 1px solid var(--border);
+			margin: 1.5em 0 2.5em;
+		}
+
+		/* ── Project Cards ── */
+		.project-card {
+			border-left: 3px solid var(--accent);
+			padding: 0 0 0 1.6em;
+			margin-bottom: 2.8em;
+		}
+
+		.project-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: baseline;
+			flex-wrap: wrap;
+			gap: 0.4em;
+			margin-bottom: 0.75em;
+		}
+
+		.project-name {
+			font-family: 'Playfair Display', Georgia, serif;
+			font-size: 1.25em;
+			font-weight: 600;
+			color: var(--heading);
+		}
+
+		.project-date {
+			font-size: 0.82em;
+			color: var(--text-dim);
+			white-space: nowrap;
+		}
+
+		.detail-label {
+			font-size: 0.8em;
+			font-style: italic;
+			color: var(--text-dim);
+			margin-bottom: 0.25em;
+		}
+
+		.detail-block {
+			margin-bottom: 1em;
+		}
+
+		.detail-block:last-child {
+			margin-bottom: 0;
+		}
+
+		.detail-block p,
+		.detail-block ul {
+			font-size: 0.92em;
+			color: var(--text);
+			line-height: 1.75;
+		}
+
+		.detail-block ul {
+			padding-left: 1.2em;
+		}
+
+		.detail-block ul li {
+			margin-bottom: 0.2em;
+		}
+
+		.tag-row {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.35em 0.7em;
+			font-size: 0.82em;
+			color: var(--text-dim);
+		}
+
+		.tag::before {
+			content: '·  ';
+		}
+
+		.tag:first-child::before {
+			content: '';
+		}
+
+		@media (max-width: 600px) {
+			#sidebar { display: none; }
+			#main { margin-left: 0 !important; padding: 2.5em 1.2em; }
+			.project-card { padding: 1.4em 1.2em; }
+			.project-header { flex-direction: column; }
+		}
+	</style>
+</head>
+<body>
+
+<div id="layout">
+
+	<!-- Sidebar -->
+	<aside id="sidebar">
+		<button id="sidebar-toggle" title="Toggle sidebar">
+			<i class="fas fa-bars"></i>
+		</button>
+		<div class="sidebar-content">
+			<div class="brand">
+				<div class="name">Sidharth Rao</div>
+				<div class="sub">CprE Student</div>
+			</div>
+			<nav>
+				<a href="index.html">Home</a>
+				<a href="projects.html" class="active">Projects</a>
+				<a href="resume.html">Resume</a>
+				<a href="seniordesign.html">Senior Design</a>
+				<a href="reflections.html">Reflections</a>
+				<a href="ethics.html">Ethics</a>
+			</nav>
+		</div>
+	</aside>
+
+	<!-- Main Content -->
+	<main id="main">
+		<div class="content-wrap">
+
+			<h1 class="page-title">Projects</h1>
+			<hr class="page-divider" />
+
+			<!-- MIPS Processor -->
+			<div class="project-card">
+				<div class="project-header">
+					<span class="project-name">MIPS Processor</span>
+					<span class="project-date">Sep – Nov 2024</span>
+				</div>
+				<div class="detail-block">
+					<div class="detail-label">Description</div>
+					<p>Built a working MIPS processor from scratch in VHDL for a computer architecture course. Started with a single-cycle design covering the full datapath, control unit, and ALU, then extended it into hardware- and software-scheduled pipelines. The pipelined version ended up running instructions more than twice as fast as the original. Used Questa Sim throughout to simulate and verify each stage.</p>
+				</div>
+
+				<div class="detail-block">
+					<div class="detail-label">My Role</div>
+					<p>Did the full build myself — designed the datapath, wrote the VHDL for each component, wired up the control logic, and then added both pipeline versions on top. A lot of time went into debugging waveforms in simulation to track down timing issues.</p>
+				</div>
+
+				<div class="detail-block">
+					<div class="detail-label">Skills &amp; Knowledge Gained</div>
+					<ul>
+						<li>Writing and structuring VHDL for a real hardware design</li>
+						<li>How single-cycle and pipelined CPUs actually differ in practice</li>
+						<li>Dealing with hazards — stalls, forwarding, and why they matter</li>
+						<li>Getting comfortable reading waveforms and catching bugs in simulation</li>
+					</ul>
+				</div>
+
+				<div class="detail-block">
+					<div class="detail-label">Resources Used</div>
+					<div class="tag-row">
+						<span class="tag">VHDL</span>
+						<span class="tag">Questa Sim</span>
+						<span class="tag">MIPS ISA</span>
+					</div>
+				</div>
+			</div>
+
+			<!-- TuneFlow -->
+			<div class="project-card">
+				<div class="project-header">
+					<span class="project-name">TuneFlow</span>
+					<span class="project-date">Aug – Nov 2024</span>
+				</div>
+				<div class="detail-block">
+					<div class="detail-label">Description</div>
+					<p>TuneFlow is an Android app where you can see what songs your friends are recommending and get personalized suggestions pulled from Spotify based on that. We integrated with the Spotify Web API to pull in user data and generate recommendations, and it ended up boosting daily active users by 40%. The app has several screens I designed and built to keep the experience simple and easy to navigate.</p>
+				</div>
+
+				<div class="detail-block">
+					<div class="detail-label">My Role</div>
+					<p>I was the frontend developer — built all the screens in Java, hooked up the Spotify API using Volley for the network calls, and handled how recommendations were displayed. I also wrote unit tests with JUnit and Mockito and used Postman to test the API endpoints while building out the integration.</p>
+				</div>
+
+				<div class="detail-block">
+					<div class="detail-label">Skills &amp; Knowledge Gained</div>
+					<ul>
+						<li>Building Android UIs in Java and working with XML layouts</li>
+						<li>Connecting to a real third-party API (Spotify) and navigating OAuth</li>
+						<li>Making async network requests with Volley</li>
+						<li>Writing unit tests and learning when mocking actually helps</li>
+						<li>Using Postman to debug API calls before wiring them into the app</li>
+					</ul>
+				</div>
+
+				<div class="detail-block">
+					<div class="detail-label">Resources Used</div>
+					<div class="tag-row">
+						<span class="tag">Java</span>
+						<span class="tag">Android SDK</span>
+						<span class="tag">Spotify Web API</span>
+						<span class="tag">Volley</span>
+						<span class="tag">JUnit</span>
+						<span class="tag">Mockito</span>
+						<span class="tag">Postman</span>
+						<span class="tag">XML</span>
+					</div>
+				</div>
+			</div>
+
+			<!-- Bomb Defusal Robot -->
+			<div class="project-card">
+				<div class="project-header">
+					<span class="project-name">Bomb Defusal Robot</span>
+					<span class="project-date">Mar – Apr 2024</span>
+				</div>
+				<div class="detail-block">
+					<div class="detail-label">Description</div>
+					<p>For an embedded systems course, our team programmed a modified Roomba with a Tiva microcontroller attached to navigate a course and "defuse a bomb" in under 5 minutes. We wrote C directly against the hardware to read sensors and store data in real time, which brought the robot's response time down by about 30%. I also built a Python GUI that received live data from the robot over WiFi and plotted it as a graph so the driver could actually see what the sensors were picking up.</p>
+				</div>
+
+				<div class="detail-block">
+					<div class="detail-label">My Role</div>
+					<p>Worked on both sides of the project — the C firmware on the Tiva for reading sensors and managing memory, and the Python GUI on the laptop side that displayed live graphs of the incoming data. It was useful to see both ends of the system and how the data flowed between them.</p>
+				</div>
+
+				<div class="detail-block">
+					<div class="detail-label">Skills &amp; Knowledge Gained</div>
+					<ul>
+						<li>Writing C close to the metal — registers, interrupts, peripherals</li>
+						<li>Reading and storing sensor data reliably under time constraints</li>
+						<li>Getting two systems (robot and laptop) talking wirelessly</li>
+						<li>Building a live-updating GUI in Python with Matplotlib and NumPy</li>
+						<li>Working as a team under a real deadline with a physical result</li>
+					</ul>
+				</div>
+
+				<div class="detail-block">
+					<div class="detail-label">Resources Used</div>
+					<div class="tag-row">
+						<span class="tag">C</span>
+						<span class="tag">Tiva Microcontroller</span>
+						<span class="tag">Python</span>
+						<span class="tag">Matplotlib</span>
+						<span class="tag">NumPy</span>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</main>
+</div>
+
+<script>
+	const sidebar = document.getElementById('sidebar');
+	const layout  = document.getElementById('layout');
+	const toggle  = document.getElementById('sidebar-toggle');
+	const icon    = toggle.querySelector('i');
+
+	toggle.addEventListener('click', () => {
+		const collapsed = sidebar.classList.toggle('collapsed');
+		layout.classList.toggle('sidebar-collapsed', collapsed);
+		icon.className = collapsed ? 'fas fa-chevron-right' : 'fas fa-bars';
+	});
+</script>
+
+</body>
+</html>
